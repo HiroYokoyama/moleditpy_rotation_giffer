@@ -27,3 +27,15 @@ This plugin relies on the host application's environment (specifically a PyVista
    * **Total Frames / Speed:** Balance these to achieve your desired smoothness and file size.
    * **Options:** Enable "Transparent Background" and "High Quality Colors" for the best results.
 4. Click **Generate GIF**, select your output directory, and allow the renderer to process the frames. The camera state will automatically restore to its original position once complete.
+
+## Development and Testing
+
+This repository includes a comprehensive unit test suite to verify dialog setup, vector rotation mathematics, and GIF generation flows.
+
+To run the unit tests, execute:
+```bash
+python -m pytest tests/ -v
+```
+
+See the [tests/README.md](tests/README.md) directory for details on test coverage, stubs, and architecture.
+
