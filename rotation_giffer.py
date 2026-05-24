@@ -8,10 +8,15 @@ Allows generating rotating GIF animations around global or view axes by orbiting
 # pylint: disable=no-name-in-module
 
 import math
+import logging
+from PyQt6.QtCore import QCoreApplication
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout,
                              QComboBox, QSpinBox, QCheckBox, QPushButton,
                              QFileDialog, QMessageBox, QFormLayout)
 import numpy as np
+
+# Set up logging for the plugin
+logger = logging.getLogger(__name__)
 
 # Attempt to load PIL for transparent GIF generation and color quantization
 try:
@@ -22,7 +27,7 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "1.1.0"
+PLUGIN_VERSION = "1.2.0"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"
@@ -187,8 +192,8 @@ class GifferDialog(QDialog):
             if use_hq:
                 try:
                     plotter.enable_anti_aliasing('ssaa')
-                except AttributeError:
-                    pass
+                except Exception as aa_err:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to enable anti-aliasing: %s", aa_err)
 
             if use_transparency and HAS_PIL:
                 images = []
@@ -235,14 +240,15 @@ class GifferDialog(QDialog):
             self.accept()
 
         except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.exception("Failed to generate GIF")
             QMessageBox.critical(self, "Error", f"Failed to generate GIF:\n{e}")
         finally:
             if use_hq:
                 try:
                     if getattr(plotter, 'render_window', None) is not None:
                         plotter.disable_anti_aliasing()
-                except AttributeError:
-                    pass
+                except Exception as aa_err:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to disable anti-aliasing: %s", aa_err)
 
             # Restore the camera state cleanly (including up-vector for view rotations)
             plotter.camera_position = initial_cpos
@@ -335,3 +341,6 @@ class GifferDialog(QDialog):
         # Manually reset clipping range before rendering
         plotter.renderer.ResetCameraClippingRange()
         plotter.render()
+
+        # Process paint events to allow macOS Cocoa backbuffer to update/swap buffers
+        QCoreApplication.processEvents()

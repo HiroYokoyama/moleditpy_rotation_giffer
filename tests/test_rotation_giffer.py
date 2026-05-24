@@ -31,6 +31,12 @@ def _install_qt_stubs():
             PointingHandCursor = None
     qt_core.Qt = _Qt
 
+    class _QCoreApplication:
+        @staticmethod
+        def processEvents():
+            pass
+    qt_core.QCoreApplication = _QCoreApplication
+
     pyqt6 = types.ModuleType("PyQt6")
     pyqt6.QtCore = qt_core
     sys.modules["PyQt6"] = pyqt6
@@ -87,7 +93,7 @@ class TestGifferMetadata(unittest.TestCase):
     """Verify plugin metadata."""
     def test_metadata(self):
         self.assertEqual(giffer_mod.PLUGIN_NAME, "Rotation Giffer")
-        self.assertEqual(giffer_mod.PLUGIN_VERSION, "1.1.0")
+        self.assertEqual(giffer_mod.PLUGIN_VERSION, "1.2.0")
         self.assertEqual(giffer_mod.PLUGIN_AUTHOR, "HiroYokoyama")
         self.assertEqual(giffer_mod.PLUGIN_CATEGORY, "Export")
 
