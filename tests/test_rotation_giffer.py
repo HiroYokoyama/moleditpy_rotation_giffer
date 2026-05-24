@@ -227,6 +227,11 @@ class TestGifferDialogExecution(unittest.TestCase):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("test_out.gif", "GIF Files (*.gif)")
 
+        # Mock MainWindow with loaded file path
+        mw = MagicMock()
+        mw.init_manager.current_file_path = os.path.normpath("/path/to/my_molecule.xyz")
+        self.context.get_main_window.return_value = mw
+
         # Configure settings mock
         self.dialog.axis_combo.currentIndex.return_value = 0 # Z axis
         self.dialog.angle_spin.value.return_value = 360
@@ -247,7 +252,12 @@ class TestGifferDialogExecution(unittest.TestCase):
 
         self.dialog.generate_gif()
 
-        # Check interaction
+        # Check interaction and verify default save path matches base name + _ZRot suffix
+        expected_default_path = os.path.normpath("/path/to/my_molecule_ZRot.gif")
+        mock_get_save_filename.assert_called_once()
+        args, _ = mock_get_save_filename.call_args
+        self.assertEqual(args[2], expected_default_path)
+
         plotter.open_gif.assert_called_once_with("test_out.gif")
         self.assertEqual(plotter.write_frame.call_count, 10)
         plotter.mwriter.close.assert_called_once()
@@ -258,8 +268,13 @@ class TestGifferDialogExecution(unittest.TestCase):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("test_inverse.gif", "GIF Files (*.gif)")
 
-        # Configure settings mock: inverse rotation checked
-        self.dialog.axis_combo.currentIndex.return_value = 0
+        # Mock MainWindow with loaded file path
+        mw = MagicMock()
+        mw.init_manager.current_file_path = os.path.normpath("/path/to/my_molecule.xyz")
+        self.context.get_main_window.return_value = mw
+
+        # Configure settings mock: inverse rotation checked, and axis_idx = 1 (X Axis)
+        self.dialog.axis_combo.currentIndex.return_value = 1
         self.dialog.angle_spin.value.return_value = 360
         self.dialog.frames_spin.value.return_value = 4
         self.dialog.fps_spin.value.return_value = 4
@@ -280,14 +295,20 @@ class TestGifferDialogExecution(unittest.TestCase):
         with patch.object(self.dialog, "_orbit_camera") as mock_orbit:
             self.dialog.generate_gif()
 
+            # Check default path matches base name + _XRot suffix
+            expected_default_path = os.path.normpath("/path/to/my_molecule_XRot.gif")
+            mock_get_save_filename.assert_called_once()
+            args, _ = mock_get_save_filename.call_args
+            self.assertEqual(args[2], expected_default_path)
+
             # 360 deg / 4 frames = 90 deg.
             # inverse is True => direction_multiplier = -1 => step = -90.0
-            # Calls to _orbit_camera should use step = -90.0
+            # Calls to _orbit_camera should use step = -90.0, axis_idx = 1 (X Axis)
             mock_orbit.assert_has_calls([
-                call(plotter, 0, -90.0, 1, (0, -10, 0), (0, 0, 1)),
-                call(plotter, 0, -90.0, 2, (0, -10, 0), (0, 0, 1)),
-                call(plotter, 0, -90.0, 3, (0, -10, 0), (0, 0, 1)),
-                call(plotter, 0, -90.0, 4, (0, -10, 0), (0, 0, 1)),
+                call(plotter, 1, -90.0, 1, (0, -10, 0), (0, 0, 1)),
+                call(plotter, 1, -90.0, 2, (0, -10, 0), (0, 0, 1)),
+                call(plotter, 1, -90.0, 3, (0, -10, 0), (0, 0, 1)),
+                call(plotter, 1, -90.0, 4, (0, -10, 0), (0, 0, 1)),
             ])
 
 

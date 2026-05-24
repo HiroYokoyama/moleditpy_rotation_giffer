@@ -7,6 +7,7 @@ Allows generating rotating GIF animations around global or view axes by orbiting
 # pylint: disable=too-many-statements,too-many-arguments,too-many-positional-arguments
 # pylint: disable=no-name-in-module
 
+import os
 import math
 import logging
 from PyQt6.QtCore import QCoreApplication
@@ -154,14 +155,44 @@ class GifferDialog(QDialog):
             QMessageBox.warning(self, "Warning", "No molecule loaded.")
             return
 
+        # Retrieve axis selection first to build the suffix
+        axis_idx = self.axis_combo.currentIndex()
+        suffix_map = {
+            0: "_ZRot",
+            1: "_XRot",
+            2: "_YRot",
+            3: "_RollRot",
+            4: "_ElevRot",
+            5: "_AzimRot"
+        }
+        suffix = suffix_map.get(axis_idx, "_Rot")
+
+        # Determine default save path based on current loaded file
+        mw = self.context.get_main_window()
+        default_path = ""
+        if (
+            mw
+            and hasattr(mw, "init_manager")
+            and getattr(mw.init_manager, "current_file_path", None)
+        ):
+            base_path = mw.init_manager.current_file_path
+            if base_path:
+                dir_name = os.path.dirname(base_path)
+                base_name, _ = os.path.splitext(os.path.basename(base_path))
+                default_path = os.path.normpath(
+                    os.path.join(dir_name, f"{base_name}{suffix}.gif")
+                )
+
+        if not default_path:
+            default_path = f"molecule{suffix}.gif"
+
         save_path, _ = QFileDialog.getSaveFileName(
-            self, "Save Rotating GIF", "", "GIF Files (*.gif)"
+            self, "Save Rotating GIF", default_path, "GIF Files (*.gif)"
         )
         if not save_path:
             return
 
-        # Retrieve user inputs
-        axis_idx = self.axis_combo.currentIndex()
+        # Retrieve remaining user inputs
         total_angle = self.angle_spin.value()
         frames = self.frames_spin.value()
         fps = self.fps_spin.value()
