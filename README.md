@@ -1,5 +1,7 @@
 # Rotation Giffer Plugin
 
+[![CI](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml/badge.svg)](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml)
+
 ## Overview
 Rotation Giffer is an export plugin designed for MoleditPy. It enables users to generate smooth, high-quality rotating GIFs of loaded molecules. Instead of rotating the model itself, the plugin mathematically orbits the camera around your choice of global or view-specific axes, ensuring consistent lighting and perfect looping capability.
 
