@@ -27,6 +27,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest numpy pillow
 
+    - name: Clone main app (real-context integration tests)
+      run: git clone --depth 1 https://github.com/HiroYokoyama/python_molecular_editor.git ../python_molecular_editor || true
+
     - name: Run test suite
+      env:
+        CI_MAIN_APP_SRC: ../python_molecular_editor/moleditpy/src
       run: |
         python -m pytest tests/ -v
