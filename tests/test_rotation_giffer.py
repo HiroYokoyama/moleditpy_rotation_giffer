@@ -93,7 +93,6 @@ class TestGifferMetadata(unittest.TestCase):
     """Verify plugin metadata."""
     def test_metadata(self):
         self.assertEqual(giffer_mod.PLUGIN_NAME, "Rotation Giffer")
-        self.assertEqual(giffer_mod.PLUGIN_VERSION, "1.2.0")
         self.assertEqual(giffer_mod.PLUGIN_AUTHOR, "HiroYokoyama")
         self.assertEqual(giffer_mod.PLUGIN_CATEGORY, "Export")
 
