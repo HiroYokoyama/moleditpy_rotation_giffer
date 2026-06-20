@@ -33,11 +33,6 @@ jobs:
             exit 1
           fi
 
-      - name: Build release package
-        run: |
-          TAG="${{ github.event.inputs.version }}"
-          zip "rotation_giffer_${TAG}.zip" rotation_giffer.py
-
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -46,7 +41,7 @@ jobs:
           gh release create "$TAG" \
             --title "Rotation Giffer $TAG" \
             --generate-notes \
-            "rotation_giffer_$TAG.zip"
+            rotation_giffer.py
 
       - name: Trigger moleditpy-plugins registry update
         if: success()
