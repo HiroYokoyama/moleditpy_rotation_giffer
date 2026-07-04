@@ -1,6 +1,7 @@
-# Rotation Giffer Plugin
+﻿# Rotation Giffer Plugin
 
 [![CI](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml/badge.svg)](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml)
+[![Downloads](https://img.shields.io/github/downloads/HiroYokoyama/moleditpy_rotation_giffer/total)](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/releases)
 
 ## Overview
 Rotation Giffer is an export plugin designed for MoleditPy. It enables users to generate smooth, high-quality rotating GIFs of loaded molecules. Instead of rotating the model itself, the plugin mathematically orbits the camera around your choice of global or view-specific axes, ensuring consistent lighting and perfect looping capability.
@@ -8,7 +9,7 @@ Rotation Giffer is an export plugin designed for MoleditPy. It enables users to 
 ## Key Features
 * **Flexible Rotation Axes:** Choose to orbit around absolute Global Axes (X, Y, Z) or relative Local View Axes (Roll, Pitch/Elevation, Yaw/Azimuth).
 * **Direction Control:** Toggle inverse rotation to instantly reverse the camera's orbital path.
-* **Granular Animation Controls:** Custom inputs for Total Rotation Angle (10° to 3600°), Total Frames (for animation smoothness), and Speed (FPS).
+* **Granular Animation Controls:** Custom inputs for Total Rotation Angle (10ﾂｰ to 3600ﾂｰ), Total Frames (for animation smoothness), and Speed (FPS).
 * **Transparency Support:** Export GIFs with cleanly masked transparent backgrounds (requires `Pillow`).
 * **High-Quality Rendering:** Utilizes Super Sample Anti-Aliasing (SSAA) and adaptive color quantization palettes for crisp, accurate visuals without the typical GIF color-banding artifacts.
 
@@ -25,7 +26,7 @@ This plugin relies on the host application's environment (specifically a PyVista
 3. In the Rotation Giffer dialog, adjust your parameters:
    * **Rotation Axis:** Select the pivot axis for the camera.
    * **Direction:** Check "Inverse Rotation" if you want a counter-clockwise orbit.
-   * **Total Rotation:** Set the total degrees for the animation (e.g., 360° for a full loop).
+   * **Total Rotation:** Set the total degrees for the animation (e.g., 360ﾂｰ for a full loop).
    * **Total Frames / Speed:** Balance these to achieve your desired smoothness and file size.
    * **Options:** Enable "Transparent Background" and "High Quality Colors" for the best results.
 4. Click **Generate GIF**, select your output directory, and allow the renderer to process the frames. The camera state will automatically restore to its original position once complete.
