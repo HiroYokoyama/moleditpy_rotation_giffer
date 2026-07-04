@@ -1,6 +1,11 @@
 """
 Rotation Giffer Plugin for MoleditPy.
 Allows generating rotating GIF animations around global or view axes by orbiting the camera.
+
+Source code, README, and full license (GNU GPL):
+    https://github.com/HiroYokoyama/moleditpy_rotation_giffer
+Copyright (c) HiroYokoyama. Licensed under the GNU General Public License;
+see the LICENSE file in the repository above for the full terms.
 """
 
 # pylint: disable=too-many-instance-attributes,too-many-locals,too-many-branches
@@ -28,7 +33,7 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "1.3.0"
+PLUGIN_VERSION = "1.3.1"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"
