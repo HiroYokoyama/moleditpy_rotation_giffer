@@ -33,7 +33,7 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "1.3.1"
+PLUGIN_VERSION = "1.3.2"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"
@@ -290,7 +290,10 @@ class GifferDialog(QDialog):
             # Restore the camera state cleanly (including up-vector for view rotations)
             plotter.camera_position = initial_cpos
             plotter.camera.up = initial_cam_up
-            self.context.refresh_3d_view()
+            # Only re-render the existing scene; a full draw_molecule_3d() rebuild
+            # is unnecessary here and would wipe any transient viewer state.
+            plotter.renderer.ResetCameraClippingRange()
+            plotter.render()
 
     def _orbit_camera(
         self,

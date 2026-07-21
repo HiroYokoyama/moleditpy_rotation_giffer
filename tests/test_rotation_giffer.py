@@ -263,6 +263,41 @@ class TestGifferDialogExecution(unittest.TestCase):
         self.dialog.accept.assert_called_once()
 
     @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    def test_generate_gif_restores_without_full_redraw(self, mock_get_save_filename):
+        # Restoring the camera must NOT trigger a full draw_molecule_3d() rebuild
+        # (context.refresh_3d_view); a plain plotter.render() is enough.
+        self.context.current_molecule = MagicMock()
+        mock_get_save_filename.return_value = ("test_out.gif", "GIF Files (*.gif)")
+
+        mw = MagicMock()
+        mw.init_manager.current_file_path = os.path.normpath("/path/to/my_molecule.xyz")
+        self.context.get_main_window.return_value = mw
+
+        self.dialog.axis_combo.currentIndex.return_value = 0
+        self.dialog.angle_spin.value.return_value = 360
+        self.dialog.frames_spin.value.return_value = 5
+        self.dialog.fps_spin.value.return_value = 10
+        self.dialog.transparency_check.isChecked.return_value = False
+        self.dialog.hq_check.isChecked.return_value = False
+        self.dialog.inverse_check.isChecked.return_value = False
+
+        plotter = MagicMock()
+        self.context.plotter = plotter
+        plotter.camera_position = ((0, 0, 10), (0, 0, 0), (0, 1, 0))
+        plotter.camera.position = (0, 0, 10)
+        plotter.camera.up = (0, 1, 0)
+        plotter.camera.focal_point = (0, 0, 0)
+        plotter.mwriter = MagicMock()
+
+        self.dialog.generate_gif()
+
+        # The expensive full-molecule redraw must never be invoked on restore.
+        self.context.refresh_3d_view.assert_not_called()
+        # Camera state is restored and the existing scene is re-rendered instead.
+        plotter.renderer.ResetCameraClippingRange.assert_called()
+        plotter.render.assert_called()
+
+    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
     def test_generate_gif_inverse_rotation(self, mock_get_save_filename):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("test_inverse.gif", "GIF Files (*.gif)")
