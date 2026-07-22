@@ -1,6 +1,7 @@
 # Rotation Giffer Plugin
 
 [![CI](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml/badge.svg)](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/actions/workflows/ci.yml)
+![Test Coverage](https://img.shields.io/badge/coverage->90%25-green)
 [![Downloads](https://img.shields.io/github/downloads/HiroYokoyama/moleditpy_rotation_giffer/total)](https://github.com/HiroYokoyama/moleditpy_rotation_giffer/releases)
 
 ## Overview
