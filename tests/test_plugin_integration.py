@@ -65,8 +65,15 @@ def _install_qt_stubs():
     ]:
         sys.modules.setdefault(name, mod)
 
-    sys.modules.setdefault("PIL", types.ModuleType("PIL"))
-    sys.modules.setdefault("PIL.Image", types.ModuleType("PIL.Image"))
+    # Prefer the real Pillow when it is installed (it is in CI). Installing
+    # empty PIL/PIL.Image stubs via setdefault would otherwise win the race on
+    # a fresh interpreter and leave every later test with a PIL.Image that has
+    # no `fromarray`, breaking the real-GIF assembly tests.
+    try:
+        import PIL.Image  # noqa: F401  (populates sys.modules with the real module)
+    except ImportError:
+        sys.modules.setdefault("PIL", types.ModuleType("PIL"))
+        sys.modules.setdefault("PIL.Image", types.ModuleType("PIL.Image"))
 
 
 _install_qt_stubs()
