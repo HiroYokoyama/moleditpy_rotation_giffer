@@ -45,24 +45,35 @@ class TestHasPilImportFallback(unittest.TestCase):
                 return None
 
         blocker = _BlockPILFinder()
-        sys.meta_path.insert(0, blocker)
-        saved_pil_modules = {
-            name: mod for name, mod in sys.modules.items()
-            if name == "PIL" or name.startswith("PIL.")
-        }
-        for name in list(saved_pil_modules):
-            del sys.modules[name]
 
-        try:
-            mod = _load_module_direct(
-                "rotation_giffer.py", "rotation_giffer_under_test_nopil"
-            )
-            self.assertFalse(mod.HAS_PIL)
-        finally:
-            sys.meta_path.remove(blocker)
-            for name, mod in saved_pil_modules.items():
-                sys.modules[name] = mod
-            sys.modules.pop("rotation_giffer_under_test_nopil", None)
+        # `patch.dict(sys.modules)` snapshots the *entire* dict on entry and,
+        # on exit, unconditionally restores it byte-for-byte (clears + re-
+        # populates from the saved copy) -- regardless of what the blocked
+        # import attempt does to sys.modules in between. This is stronger
+        # than manually deleting/re-adding the PIL* keys we think are
+        # relevant: it also undoes any partial/stub entries the blocked
+        # import machinery might otherwise leave behind, which is what was
+        # corrupting real Pillow (`PIL.Image` missing `fromarray`) for the
+        # tests that ran after this one on a fresh CI runner.
+        with patch.dict(sys.modules):
+            for name in [n for n in sys.modules if n == "PIL" or n.startswith("PIL.")]:
+                del sys.modules[name]
+
+            sys.meta_path.insert(0, blocker)
+            try:
+                mod = _load_module_direct(
+                    "rotation_giffer.py", "rotation_giffer_under_test_nopil"
+                )
+                self.assertFalse(mod.HAS_PIL)
+            finally:
+                sys.meta_path.remove(blocker)
+                sys.modules.pop("rotation_giffer_under_test_nopil", None)
+
+        # Sanity-check that the restore left genuine, working Pillow behind
+        # for every subsequent test in this process (guards against any
+        # regression in the isolation strategy above).
+        from PIL import Image as _RealImage  # pylint: disable=import-outside-toplevel
+        self.assertTrue(hasattr(_RealImage, "fromarray"))
 
 
 class TestSetupUiWithoutPil(unittest.TestCase):
