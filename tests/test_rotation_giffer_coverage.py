@@ -14,6 +14,7 @@ Additional coverage tests for rotation_giffer.py:
 # pylint: disable=missing-class-docstring,missing-function-docstring
 # pylint: disable=too-few-public-methods,protected-access,invalid-name
 
+import builtins
 import importlib.util as importlib_util
 import os
 import sys
@@ -38,40 +39,31 @@ class TestHasPilImportFallback(unittest.TestCase):
     """Verify HAS_PIL is set to False when the PIL import fails (lines 31-32)."""
 
     def test_has_pil_false_when_pil_missing(self):
-        class _BlockPILFinder:
-            def find_spec(self, fullname, path=None, target=None):
-                if fullname == "PIL" or fullname.startswith("PIL."):
-                    raise ImportError(f"blocked: {fullname}")
-                return None
+        # Force `from PIL import Image` to fail *only* while the module body
+        # executes, by intercepting the import at `builtins.__import__`.
+        # Crucially this does NOT touch `sys.modules` or `sys.meta_path`, so
+        # the process-wide real Pillow is left completely intact -- earlier
+        # approaches that deleted PIL from sys.modules / installed a blocking
+        # meta-path finder left a half-initialised `PIL.Image` behind on a
+        # fresh CI runner (missing `fromarray`), breaking every later test
+        # that assembles a real GIF.
+        real_import = builtins.__import__
 
-        blocker = _BlockPILFinder()
+        def _blocked_import(name, *args, **kwargs):
+            if name == "PIL" or name.startswith("PIL."):
+                raise ImportError(f"blocked: {name}")
+            return real_import(name, *args, **kwargs)
 
-        # `patch.dict(sys.modules)` snapshots the *entire* dict on entry and,
-        # on exit, unconditionally restores it byte-for-byte (clears + re-
-        # populates from the saved copy) -- regardless of what the blocked
-        # import attempt does to sys.modules in between. This is stronger
-        # than manually deleting/re-adding the PIL* keys we think are
-        # relevant: it also undoes any partial/stub entries the blocked
-        # import machinery might otherwise leave behind, which is what was
-        # corrupting real Pillow (`PIL.Image` missing `fromarray`) for the
-        # tests that ran after this one on a fresh CI runner.
-        with patch.dict(sys.modules):
-            for name in [n for n in sys.modules if n == "PIL" or n.startswith("PIL.")]:
-                del sys.modules[name]
-
-            sys.meta_path.insert(0, blocker)
+        with patch("builtins.__import__", side_effect=_blocked_import):
             try:
                 mod = _load_module_direct(
                     "rotation_giffer.py", "rotation_giffer_under_test_nopil"
                 )
                 self.assertFalse(mod.HAS_PIL)
             finally:
-                sys.meta_path.remove(blocker)
                 sys.modules.pop("rotation_giffer_under_test_nopil", None)
 
-        # Sanity-check that the restore left genuine, working Pillow behind
-        # for every subsequent test in this process (guards against any
-        # regression in the isolation strategy above).
+        # Real Pillow was never disturbed; confirm it for the tests that follow.
         from PIL import Image as _RealImage  # pylint: disable=import-outside-toplevel
         self.assertTrue(hasattr(_RealImage, "fromarray"))
 
