@@ -33,7 +33,7 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "2.0.0a1"
+PLUGIN_VERSION = "2.0.0"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"
