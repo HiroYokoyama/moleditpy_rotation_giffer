@@ -15,8 +15,8 @@ see the LICENSE file in the repository above for the full terms.
 import os
 import math
 import logging
-from PyQt6.QtCore import QCoreApplication
-from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout,
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout,
                              QComboBox, QSpinBox, QCheckBox, QPushButton,
                              QFileDialog, QMessageBox, QFormLayout)
 import numpy as np
@@ -33,7 +33,7 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "1.3.2"
+PLUGIN_VERSION = "2.0.0a1"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"

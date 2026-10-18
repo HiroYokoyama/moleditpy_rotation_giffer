@@ -2,7 +2,7 @@
 
 This directory contains the unit tests for the **Rotation Giffer** plugin.
 
-All tests run completely headlessly without requiring an active display/X server or heavy graphical context. The PyQt6 windowing systems and PyVista plotters are dynamically mocked and stubbed at the module level so tests execute in milliseconds.
+All tests run completely headlessly without requiring an active display/X server or heavy graphical context. The PySide6 windowing systems and PyVista plotters are dynamically mocked and stubbed at the module level so tests execute in milliseconds.
 
 ---
 

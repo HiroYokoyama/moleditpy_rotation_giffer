@@ -16,12 +16,12 @@ import numpy as np
 
 
 # ---------------------------------------------------------------------------
-# Install Qt stubs so that Pyvista / PyQt6 can be imported / mocked cleanly
+# Install Qt stubs so that Pyvista / PySide6 can be imported / mocked cleanly
 # in a headless test environment.
 # ---------------------------------------------------------------------------
 def _install_qt_stubs():
-    # PyQt6.QtCore stubs
-    qt_core = types.ModuleType("PyQt6.QtCore")
+    # PySide6.QtCore stubs
+    qt_core = types.ModuleType("PySide6.QtCore")
     class _Qt:
         class AlignmentFlag:
             AlignRight = None
@@ -37,13 +37,13 @@ def _install_qt_stubs():
             pass
     qt_core.QCoreApplication = _QCoreApplication
 
-    pyqt6 = types.ModuleType("PyQt6")
-    pyqt6.QtCore = qt_core
-    sys.modules["PyQt6"] = pyqt6
-    sys.modules["PyQt6.QtCore"] = qt_core
+    pyside6 = types.ModuleType("PySide6")
+    pyside6.QtCore = qt_core
+    sys.modules["PySide6"] = pyside6
+    sys.modules["PySide6.QtCore"] = qt_core
 
-    # PyQt6.QtWidgets stubs
-    qt_widgets = types.ModuleType("PyQt6.QtWidgets")
+    # PySide6.QtWidgets stubs
+    qt_widgets = types.ModuleType("PySide6.QtWidgets")
     class _QDialog:
         def __init__(self, parent=None):
             self._parent = parent
@@ -68,8 +68,8 @@ def _install_qt_stubs():
     qt_widgets.QFileDialog = MagicMock()
     qt_widgets.QMessageBox = MagicMock()
 
-    pyqt6.QtWidgets = qt_widgets
-    sys.modules["PyQt6.QtWidgets"] = qt_widgets
+    pyside6.QtWidgets = qt_widgets
+    sys.modules["PySide6.QtWidgets"] = qt_widgets
 
 
 _install_qt_stubs()
@@ -208,12 +208,12 @@ class TestGifferDialogExecution(unittest.TestCase):
 
     def test_generate_gif_no_molecule(self):
         self.context.current_molecule = None
-        with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warning:
+        with patch("PySide6.QtWidgets.QMessageBox.warning") as mock_warning:
             self.dialog.generate_gif()
             mock_warning.assert_called_once()
             self.context.plotter.assert_not_called()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_generate_gif_cancel_save(self, mock_get_save_filename):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("", "")
@@ -221,7 +221,7 @@ class TestGifferDialogExecution(unittest.TestCase):
         self.dialog.generate_gif()
         self.context.plotter.open_gif.assert_not_called()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_generate_gif_standard_loop(self, mock_get_save_filename):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("test_out.gif", "GIF Files (*.gif)")
@@ -262,7 +262,7 @@ class TestGifferDialogExecution(unittest.TestCase):
         plotter.mwriter.close.assert_called_once()
         self.dialog.accept.assert_called_once()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_generate_gif_restores_without_full_redraw(self, mock_get_save_filename):
         # Restoring the camera must NOT trigger a full draw_molecule_3d() rebuild
         # (context.refresh_3d_view); a plain plotter.render() is enough.
@@ -297,7 +297,7 @@ class TestGifferDialogExecution(unittest.TestCase):
         plotter.renderer.ResetCameraClippingRange.assert_called()
         plotter.render.assert_called()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_generate_gif_inverse_rotation(self, mock_get_save_filename):
         self.context.current_molecule = MagicMock()
         mock_get_save_filename.return_value = ("test_inverse.gif", "GIF Files (*.gif)")
