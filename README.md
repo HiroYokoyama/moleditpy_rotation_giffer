@@ -44,3 +44,7 @@ python -m pytest tests/ -v
 
 See the [tests/README.md](tests/README.md) directory for details on test coverage, stubs, and architecture.
 
+
+## Licensing scope
+
+First-party code in this migration is LGPL-3.0-or-later. See [LICENSE](LICENSE), [COPYING](COPYING) and [dependency/provenance terms](LICENSING.md). Third-party components and historical releases retain their own terms.
