@@ -4,7 +4,7 @@ Allows generating rotating GIF animations around global or view axes by orbiting
 
 Source code, README, and full license (GNU GPL):
     https://github.com/HiroYokoyama/moleditpy_rotation_giffer
-Copyright (c) HiroYokoyama. Licensed under the GNU General Public License;
+Copyright (c) HiroYokoyama. Licensed under the GNU Lesser General Public License;
 see the LICENSE file in the repository above for the full terms.
 """
 
@@ -15,8 +15,8 @@ see the LICENSE file in the repository above for the full terms.
 import os
 import math
 import logging
-from PyQt6.QtCore import QCoreApplication
-from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout,
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout,
                              QComboBox, QSpinBox, QCheckBox, QPushButton,
                              QFileDialog, QMessageBox, QFormLayout)
 import numpy as np
@@ -33,11 +33,11 @@ except ImportError:
 
 # --- Plugin Metadata ---
 PLUGIN_NAME = "Rotation Giffer"
-PLUGIN_VERSION = "1.3.2"
+PLUGIN_VERSION = "2.0.0"
 PLUGIN_AUTHOR = "HiroYokoyama"
 PLUGIN_DESCRIPTION = "Creates a rotating GIF around global or view axes by orbiting the camera."
 PLUGIN_CATEGORY = "Export"
-PLUGIN_SUPPORTED_MOLEDITPY_VERSION = ">=3.0.0, <5.0.0"
+PLUGIN_SUPPORTED_MOLEDITPY_VERSION = ">=5.0.0, <6.0.0"
 
 
 def initialize(context):

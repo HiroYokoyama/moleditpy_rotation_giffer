@@ -16,8 +16,8 @@ Rotation Giffer is an export plugin designed for MoleditPy. It enables users to 
 * **High-Quality Rendering:** Utilizes Super Sample Anti-Aliasing (SSAA) and adaptive color quantization palettes for crisp, accurate visuals without the typical GIF color-banding artifacts.
 
 ## Requirements
-This plugin relies on the host application's environment (specifically a PyVista `plotter` and PyQt6 UI). Ensure the following dependencies are available:
-* `PyQt6`
+This plugin relies on the host application's environment (specifically a PyVista `plotter` and PySide6 UI). Ensure the following dependencies are available:
+* `PySide6`
 * `numpy`
 * `pyvista`
 * `Pillow` / `PIL` (Optional, but **highly recommended** for transparent backgrounds and the high-quality color pipeline).
@@ -44,3 +44,7 @@ python -m pytest tests/ -v
 
 See the [tests/README.md](tests/README.md) directory for details on test coverage, stubs, and architecture.
 
+
+## Licensing scope
+
+First-party code in this migration is LGPL-3.0-or-later. See [LICENSE](LICENSE), [COPYING](COPYING) and [dependency/provenance terms](LICENSING.md). Third-party components and historical releases retain their own terms.

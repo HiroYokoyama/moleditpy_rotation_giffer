@@ -101,7 +101,7 @@ class TestGenerateGifDefaultPathFallback(unittest.TestCase):
         self.dialog.inverse_check = MagicMock()
         self.dialog.accept = MagicMock()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_default_path_fallback_no_main_window_file(self, mock_get_save):
         self.context.current_molecule = MagicMock()
         # No main window / no init_manager.current_file_path -> falls through.
@@ -118,7 +118,7 @@ class TestGenerateGifDefaultPathFallback(unittest.TestCase):
         args, _ = mock_get_save.call_args
         self.assertEqual(args[2], "molecule_ZRot.gif")
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_default_path_fallback_no_main_window(self, mock_get_save):
         self.context.current_molecule = MagicMock()
         self.context.get_main_window.return_value = None
@@ -193,7 +193,7 @@ class TestGenerateGifTransparentPillowPath(unittest.TestCase):
         self.addCleanup(self.tmpdir.cleanup)
         self.out_path = os.path.join(self.tmpdir.name, "out.gif")
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_transparent_hq_pillow_path_writes_real_gif(self, mock_get_save):
         mock_get_save.return_value = (self.out_path, "GIF Files (*.gif)")
         self.dialog.transparency_check.isChecked.return_value = True
@@ -208,7 +208,7 @@ class TestGenerateGifTransparentPillowPath(unittest.TestCase):
         self.dialog.accept.assert_called_once()
         self.plotter.render.assert_called()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_transparent_no_hq_pillow_path_writes_real_gif(self, mock_get_save):
         mock_get_save.return_value = (self.out_path, "GIF Files (*.gif)")
         self.dialog.transparency_check.isChecked.return_value = True
@@ -221,7 +221,7 @@ class TestGenerateGifTransparentPillowPath(unittest.TestCase):
         self.assertTrue(os.path.exists(self.out_path))
         self.dialog.accept.assert_called_once()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_anti_aliasing_enable_failure_is_logged_and_swallowed(self, mock_get_save):
         mock_get_save.return_value = (self.out_path, "GIF Files (*.gif)")
         self.dialog.transparency_check.isChecked.return_value = True
@@ -235,7 +235,7 @@ class TestGenerateGifTransparentPillowPath(unittest.TestCase):
         self.assertTrue(os.path.exists(self.out_path))
         self.dialog.accept.assert_called_once()
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_disable_anti_aliasing_failure_is_logged_and_swallowed(self, mock_get_save):
         mock_get_save.return_value = (self.out_path, "GIF Files (*.gif)")
         self.dialog.transparency_check.isChecked.return_value = True
@@ -289,12 +289,12 @@ class TestGenerateGifExceptionBranch(unittest.TestCase):
         self.plotter.camera.up = (0, 1, 0)
         self.plotter.camera.focal_point = (0, 0, 0)
 
-    @patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName")
+    @patch("PySide6.QtWidgets.QFileDialog.getSaveFileName")
     def test_open_gif_failure_shows_critical_and_restores_camera(self, mock_get_save):
         mock_get_save.return_value = ("broken.gif", "GIF Files (*.gif)")
         self.plotter.open_gif.side_effect = RuntimeError("disk full")
 
-        with patch("PyQt6.QtWidgets.QMessageBox.critical") as mock_critical:
+        with patch("PySide6.QtWidgets.QMessageBox.critical") as mock_critical:
             self.dialog.generate_gif()
             mock_critical.assert_called_once()
 
