@@ -1,0 +1,10 @@
+{
+  "source": "rotation_giffer.py",
+  "title": "Rotation Giffer",
+  "assets": [
+    "rotation_giffer.py",
+    "LICENSE",
+    "COPYING",
+    "LICENSING.md"
+  ]
+}
